@@ -1,13 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class player : MonoBehaviour 
 {
+	public Text score;
 	public float RightArrow, LeftArrow, UpArrow;
 	Vector3 position;
 	bool jump;
 	float speedmove=5;
 	float speedjump=300;
+
+	public Camera MainCamera;
 	
 
 	public AudioClip backgroundt;
@@ -20,6 +24,7 @@ public class player : MonoBehaviour
 		if (Input.GetKey (KeyCode.LeftArrow)) {
 			audio.clip= bergerak;
 			audio.Play();
+			transform.eulerAngles= new Vector3(0,180,0);
 			position= transform.position+Vector3.left;
 			this.gameObject.transform.position = Vector3.MoveTowards (transform.position, position, speedmove * Time.deltaTime);
 		}
@@ -27,6 +32,7 @@ public class player : MonoBehaviour
 		if (Input.GetKey (KeyCode.RightArrow)) {
 			audio.clip= bergerak;
 			audio.Play ();
+			transform.eulerAngles= new Vector3(0,0,0);
 			position= transform.position+Vector3.right;
 			this.gameObject.transform.position = Vector3.MoveTowards (transform.position, position, speedmove * Time.deltaTime);
 		}
@@ -47,11 +53,17 @@ public class player : MonoBehaviour
 	
 	void OnCollisionEnter(Collision other)
 	{
-		if (other.gameObject.tag == "boxpoint") 
-		{
+		if (other.gameObject.tag == "boxpoint") {
 		other.gameObject.audio.Play ();
+		BoxCollider box= GetComponent<BoxCollider>();
+		box.isTrigger = true;
 		//jump = false;;
-		Debug.Log ("Tersentuh");
+		}
+
+		if (other.gameObject.tag == "point") {
+			int point = int.Parse (score.text) + 10;
+			score.text = point.ToString ();
+			Destroy (other.gameObject);//hancurkan objek
 		}
 	}
 
